@@ -1,0 +1,361 @@
+return{
+    descriptions = {
+        Joker = {
+            j_tsunami = {
+                name = "Tsunami",
+                text = {
+                    "All {C:attention}cards{} are counted",
+                    "Each {C:attention}counted{} card gives {C:mult}+#1#{} mult.",
+                    "Every {C:attention}second{} counted card gives {C:mult}+#2#{} more",
+                    "resets after hand scoring",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_avid_tourist = {
+                name = "Avid Tourist",
+                text = {
+                    "Each played {C:attention}card{} permanently",
+                    "gives {C:chips}+#1#{} chips when scored",
+                    "bonus increases by {C:chips}+#2#{}",
+                    "if the card hasn't been buffed before",
+                    "resets to {C:chips}+#1#{} if it has",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_familiar_faces = {
+                name = "Familiar Faces",
+                text = {
+                    "Each played {C:attention}face card{} permanently",
+                    "gives {C:chips}+#1#{} chips when scored",
+                    "bonus increases by {C:chips}+#2#{}",
+                    "if the card has already been buffed",
+                    "resets to {C:chips}+#1#{} if it hasn't",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_no_riff_raff = {
+                name = "Bad Joke",
+                text = {
+                    "Creates a few common jokers",
+                    "{C:mult}+#2#{} mult. when choosing a blind",
+                    "if a joker was successfully added",
+                    "{C:inactive}(currently {C:red}+#1#{C:inactive} mult.)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_inflation = {
+                name = "Lodger's Coupon",
+                text = {
+                    "Each played {C:attention}hand{} containing",
+                    "{C:attention}2{} or more {C:diamonds}Diamonds{} cards gives",
+                    "{C:mult}+#1#{} mult. and increases the sell price",
+                    "of itself and adjacent jokers by {C:attention}+$#2#{}",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_super_greedy_joker = {
+                name = "Golden Amber",
+                text = {
+                    "Played {C:diamonds}Diamond{} cards",
+                    "give {C:attention}+$#1#{} when scored",
+                    "every {C:attention}third{} counted card",
+                    "increases payout by {C:attention}+$#2#{}",
+                    "until end of round, other suits are weakened",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_harem = {
+                name = "Harem Joker",
+                text = {
+                    "Each played {C:attention}Queen{} gives",
+                    "{C:mult}+#1#{} mult. or {C:mult}+#2#{} if it's a {C:hearts}Heart{}",
+                    "Played {C:attention}Queens{} become {C:hearts}Hearts{}",
+                    "{C:hearts}Heart {C:attention}Queens{} gain a random suit",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_ruby = {
+                name = "Crimson Ruby",
+                text = {
+                    "Each played {C:hearts}Heart{} card",
+                    "has a {C:green}#7# in #4#{} chance to give",
+                    "{C:chips}+#1#{} chips, {C:mult}+#2#{} mult., and {X:red,C:white}X#3#{} mult.",
+                    "Recipe: {C:inactive}(#5# + #6#)"
+                }
+            },
+            j_count_dracula = {
+                name = "Count Dracula",
+                text = {
+                    "This joker grants {X:red,C:white}x#1#{} mult.",
+                    "for each played and scored {C:attention}enhanced card{}",
+                    "if the card was a {C:hearts}Heart{}, grants {X:red,C:white}x#2#{} instead",
+                    "also removes the card's {C:attention}enhancement{}",
+                    "{C:inactive}(Currently: mult. {X:mult,C:white}x#3# {C:inactive})",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_on_the_cutting_edge = {
+                name = "Cutting Edge",
+                text = {
+                    "This joker gives {C:chips}+#1#{} chips",
+                    "for each played and scored card",
+                    "if its suit is {C:spades}Spades{}. Each played hand",
+                    "containing {C:spades}Spades{} counts as {C:attention}2{} hands",
+                    "Recipe: {C:inactive}(#2# + #3#)"
+                }
+            },
+            j_hot_beans = {
+                name = "Hot Beans",
+                text = {
+                    "Increases {C:attention}hand size{} by {C:attention}#1#{}",
+                    "Decreases by {C:attention}1{} if the played hand",
+                    "contains fewer than {C:attention}3 {C:spades}Spades{} cards",
+                    "Recipe: {C:inactive}(#2# + #3#)"
+                }
+            },
+            j_full_pockets = {
+                name = "Full Pockets",
+                text = {
+                    "{C:red}+#1#{} mult. for each",
+                    "card below {C:attention}#6#{} and each",
+                    "{C:clubs}Clubs{} card above {C:attention}#3#{}",
+                    "in your full deck",
+                    "{C:inactive}(currently {C:red}+#2#{C:inactive} mult.)",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_half_flag = {
+                name = "Half Flag",
+                text = {
+                    "{C:chips}+#1#{} chips",
+                    "for a discard containing {C:attention}3{} or fewer cards",
+                    "{C:inactive}(currently {C:chips}+#2#{C:inactive} chips)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }    
+            },
+            j_true_madness = {
+                name = "True Madness",
+                text = {
+                    "When choosing a {C:attention}small{} or {C:attention}big blind{}",
+                    "gain {X:mult,C:white}x#1#{} mult.",
+                    "and {C:attention}destroy{} a random joker",
+                    "increasing the bonus by {X:mult,C:white}x#3#{}",
+                    "{C:attention}resets{} the bonus if no {C:attention}joker{} was destroyed",
+                    "can destroy {C:attention}eternal{} jokers",
+                    "{C:inactive}(Currently: mult. {X:mult,C:white}x#2#{C:inactive})",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_maniac_joker = {
+                name = "Maniac Joker",
+                text = {
+                    "When choosing a {C:attention}small{} or {C:attention}big blind{}",
+                    "the joker to the right is destroyed if its rarity is {C:red}#1#{}",
+                    "and permanently adds {C:attention}a quarter{}",
+                    "of its sell price to this {X:mult,C:white}mult.{}",
+                    "otherwise, the multiplier is {C:attention}halved{}",
+                    "the required rarity changes randomly after a joker is destroyed",
+                    "{C:inactive}(currently {X:mult,C:white}x#2#{C:inactive} mult.)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_Absolute_emptiness = {
+                name = "Absolute Emptiness",
+                text = {
+                    "{X:red,C:white}x1.5{} mult. for each",
+                    "empty {C:attention}joker slot{},",
+                    "including the joker stencil and Absolute Emptiness itself",
+                    "Creates a copy of a random joker after defeating a boss blind",
+                    "{C:inactive}(currently {X:red,C:white}x#1#{C:inactive})",
+                    "Recipe: {C:inactive}(#2# + #3#)"
+                }
+            },
+            j_banana_stencil = {
+                name = "Banana Stencil",
+                text = {
+                    "{X:red,C:white}x#1#{} mult.",
+                    "All {C:attention}edible{} jokers grant {X:red,C:white}x#2#{} mult.",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_quadruple_joker = {
+                name = "Quadruple Joker",
+                text = {
+                    "This joker grants {C:chips}+#2#{} chips",
+                    "if the played hand has exactly {C:attention}4{} cards.",
+                    "Allows forming {C:attention}flushes{} and {C:attention}straights{} with {C:attention}4{} cards",
+                    "{C:red}Prevents choosing more than 4 cards{}",
+                    "{C:inactive}(Currently: {C:chips}#1#{C:inactive} chips)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_business_acumen = {
+                name = "Business Acumen",
+                text = {
+                    "The first {C:attention}3{} played {C:attention}face cards{}",
+                    "have a {C:green}#6# in #3#{} chance to give {C:attention}+$#1#{}",
+                    "The {C:attention}fourth{} face card increases payout to {C:attention}+$#2#{}",
+                    "All further face cards subtract {C:attention}#$#1#{}",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_gold_card = {
+                name = "Gold Card",
+                text = {
+                    "Increases its sell value by {C:attention}#$#1#{} at the end of the round",
+                    "Take a loan equal to its current sell value",
+                    "Recipe: {C:inactive}(#2# + #3#)"
+                }
+            },
+            j_deposit = {
+                name = "Deposit",
+                text = {
+                    "Takes {C:attention}#$#1#{} for each",
+                    "played {C:attention}face card{}",
+                    "and adds it to its {C:attention}sell value{}",
+                    "multiplies its value by {C:attention}#2#{}",
+                    "after defeating a {C:attention}boss blind{}",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_banana_smoothie = {
+                name = "Banana Smoothie",
+                text = {
+                    "When choosing a {C:attention}blind{},",
+                    "destroys the joker to the right",
+                    "and permanently adds {C:attention}double{}",
+                    "its sell value to this {C:red}mult.{}",
+                    "{C:green}#5# in #2#{} chance to create a random",
+                    "{C:attention}edible{} joker in its place",
+                    "{C:inactive}(currently {C:mult}+#1#{C:inactive} mult.)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_drunken_flag = {
+                name = "Drunken Flag",
+                text = {
+                    "{C:red}+#2#{} discards per round",
+                    "{C:chips}+#1#{} chips for",
+                    "each remaining {C:attention}discard{}",
+                    "{C:attention}weakens{} after a {C:attention}discard{} is used",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_supervillain = {
+                name = "Supervillain",
+                text = {
+                    "When {C:attention}choosing a blind{}, converts",
+                    "all {C:red}discards{} into {C:blue}hands{}, {C:red}+#1#{} mult.",
+                    "bonus {C:attention}doubles{} for each {C:attention}played hand{}",
+                    "and resets on {C:attention}blind selection{}",
+                    "Recipe: {C:inactive}(#2# + #3#)"
+                }
+            },
+            j_museum_thief = {
+                name = "Museum Thief",
+                text = {
+                    "When choosing a {C:attention}blind{},",
+                    "gain {C:blue}+#1#{} hands and",
+                    "{C:attention}lose all discards{}",
+                    "Adds one {C:attention}Stone{} card",
+                    "to your deck on blind selection",
+                    "Each played {C:attention}hand{} has a",
+                    "{C:green}#5# in #2#{} chance to create",
+                    "a {C:attention}Stone{} card",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_stoneface = {
+                name = "Stoneface",
+                text = {
+                    "When choosing a {C:attention}blind{},",
+                    "adds one {C:attention}Stone{} card to your deck",
+                    "Gain {C:attention}$#1#{} when discarding a hand",
+                    "containing {C:attention}#2#{} {C:attention}Stone{} cards",
+                    "and create one more {C:attention}Stone{} card",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_billiard_trick = {
+                name = "Billiard Trick",
+                text = {
+                    "{X:red,C:white}x#2#{} mult. on the {C:attention}last",
+                    "{C:attention}hand{} of the round, and a",
+                    "{C:green}#6# in #1#{} chance to create {C:attention}#3#{}",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_eight_shooter = {
+                name = "Eight Shooter",
+                text = {
+                    "{C:green}#5# in #1#{} chance",
+                    "to replay the {C:attention}first{} played card",
+                    "used in scoring {C:attention}#2#{} additional times",
+                    "chance increases with each {C:attention}8{} held in hand",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_random_mutation = {
+                name = "Random Mutation",
+                text = {
+                    "If the {C:attention}first hand{} of the round",
+                    "has only {C:attention}1{} card, add {C:attention}several{}",
+                    "copies of it to your deck and place them in your {C:attention}hand{}",
+                    "copies may change their {C:attention}suit{} and {C:attention}rank{}",
+                    "Recipe: {C:inactive}(#1# + #2#)"
+                }
+            },
+            j_starfall = {
+                name = "Starfall",
+                text = {
+                    "Adds to mult. {C:attention}twice{} the number of",
+                    "times a {C:attention}poker hand{} was played this run",
+                    "{C:attention}Twice{} replays all played cards",
+                    "on the {C:attention}last hand{} of the round",
+                    "The {C:attention}poker hand of the last round{}",
+                    "is considered played {C:attention}three times{}",
+                    "Recipe: {C:inactive}(#2# + #3#)"
+                }
+            },
+            j_blind_throw = {
+                name = "Blind Throw",
+                text = {
+                    "All {C:green}chances{} {C:attention}guaranteed{} to trigger",
+                    "on the {C:attention}last hand{} of the round",
+                    "Recipe: {C:inactive}(#1# + #2#)"
+                }
+            },
+            j_steel_will = {
+                name = "Steel Will",
+                text = {
+                    "{X:red,C:white}x#2#{} mult. for each {C:attention}Steel{} card in your deck",
+                    "Bonus is multiplied by {C:attention}one third{} the rank",
+                    "of the {C:attention}lowest-ranked Steel card{} in your hand",
+                    "{C:inactive}(currently mult. {X:mult,C:white}x#1#{C:inactive})",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_cobalt_joker = {
+                name = "Cobalt Joker",
+                text = {
+                    "{C:chips}+#2#{} chips per",
+                    "remaining card in your {C:attention}deck",
+                    "{C:chips}+#3#{} chips if the card is {C:attention}Steel{}",
+                    "After playing a {C:attention}Steel{} card it returns to the deck",
+                    "{C:inactive}(currently {C:chips}+#1#{C:inactive} chips)",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_chaos_card = {
+                name = "Chaos Card",
+                text = {
+                    "This joker grants {C:mult}+#2#{} mult.",
+                    "for each {C:attention}reroll{} in the shop",
+                    "each {C:attention}reroll{} may randomly become {C:attention}free{}",
+                    "{C:inactive}(Currently: {C:mult}+#1#{C:inactive} mult.)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+        }
+    }
+}
