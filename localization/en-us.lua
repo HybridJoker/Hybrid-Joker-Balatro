@@ -356,6 +356,81 @@ return{
                     "Recipe: {C:inactive}(#3# + #4#)"
                 }
             },
+            j_professor_skeleton = {
+                name = "Professor Skeleton",
+                text = {
+                    "Prevents death,",
+                    "then grants {C:attention}$#1#{} and",
+                    "{C:attention}#2#{} free {C:green}rerolls",
+                    "{S:1.1,C:red,E:2}self-destructs{}",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
+            j_golden_ratio = {
+                name = "Golden Ratio",
+                text = {
+                    "Each played {C:attention}golden{} {C:attention}Ace{},",
+                    "{C:attention}2{}, {C:attention}3{}, {C:attention}5{}, or {C:attention}8{} gives {C:mult}+#2#{} mult. when scored",
+                    "and increases the multiplier for received {C:attention}$ by {X:attention,C:white}x#3#{}",
+                    "{C:inactive}(currently mult. {X:attention,C:white}x#1#{C:inactive})",
+                    "{C:inactive} Sell price is not affected",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_mathematically_correct_beans = {
+                name = "Mathematically Correct Beans",
+                text = {
+                    "Hand size {C:attention}+#1#{}",
+                    "decreases by {C:red}1{} every round",
+                    "Play {C:attention}Ace{}, {C:attention}2{}, {C:attention}3{}, {C:attention}5{}, and {C:attention}8{}",
+                    "to restore original value; each also grants {C:mult}+#2#{} mult.",
+                    "{C:inactive}(Remaining to play: #3#)",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_landslide = {
+                name = "Landslide",
+                text = {
+                    "When choosing a {C:attention}blind{},",
+                    "gain {C:blue}+#1#{} hands and",
+                    "{C:attention}lose all discards{}",
+                    "Adds one {C:attention}Stone{} card",
+                    "to your deck for each {C:attention}played hand{}",
+                    "All {C:attention}cards{} are scored",
+                    "Each {C:attention}scored{} card gives {C:mult}+#2#{} mult.",
+                    "Each {C:attention}additional{} card gives {C:mult}+#3#{} more",
+                    "Resets after hand is scored",
+                    "Replays all Stone cards",
+                    "Recipe: {C:inactive}(#4# + #5#)"
+                }
+            },
+            j_universe_of_jokes = {
+                name = "Universe of Jokes",
+                text = {
+                    "Creates a {C:attention}random{} number of {C:attention}random{} jokers on {C:attention}blind selection{}",
+                    "These jokers {C:attention}ignore{} the joker slot limit",
+                    "After a random number of rounds, these jokers {S:1.1,C:red,E:2}self-destruct{}",
+                    "Gains {X:mult,C:white}x#2#{} mult. for each {S:1.1,C:red,E:2}self-destruction{}",
+                    "{C:inactive}(Currently: {X:mult,C:white}x#1#{C:inactive} mult.)",
+                    "Recipe: {C:inactive}(#3# + #4#)"
+                }
+            },
         }
-    }
+    },
+	misc = {
+		v_dictionary={
+            emptiness_active="Actively!",
+			emptiness_inactive="Inactive",
+        },
+        dictionary={
+            b_fuse = "Merge",
+            k_fusion="Hybrid",
+            k_advanced_hybrid = "Advanced Hybrid",
+            k_minushand = "-1 hand"
+        },
+        labels={
+            fusion="Hybrid",
+            advanced_hybrid = "Advanced Hybrid"
+        },
+	}
 }

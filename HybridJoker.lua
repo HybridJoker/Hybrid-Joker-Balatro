@@ -2,7 +2,7 @@
 --- MOD_NAME: Hybrid Joker
 --- MOD_ID: hybridjoker
 --- MOD_AUTHOR: [Demidoslav]
---- MOD_DESCRIPTION: Джокеры-гибриды
+--- MOD_DESCRIPTION: Mod adds hybrid jokers
 --- BADGE_COLOUR: B26CBB
 --- PRIORITY: -10000
 --- DEPENDENCIES: [Steamodded>=1.0.0~BETA-0410b]
@@ -27,10 +27,8 @@ local mod_vouchers = {
     v_joker_slot_plus = true,
 }
 
--- У меня проблемы с добавлением этого в локализацию
-G.localization.misc.dictionary["k_fusion"] = "Hybrid"
-G.localization.misc.dictionary["b_fuse"] = "Merge"
-G.localization.misc.dictionary["k_minushand"] = "-1 hand"
+-- Ограничение квадратного джокера
+local quadruple_limit = 4
 
 -- Редкости джокеров
 SMODS.Rarity{
@@ -188,6 +186,26 @@ HybridJoker.fusions = {
 		{ name = "j_chaos", carry_stat = nil, extra_stat = false },
 		{ name = "j_flash", carry_stat = "mult", extra_stat = false }
 	}, result_joker = "j_chaos_card", cost = 8},
+	{ jokers = { 
+		{ name = "j_mr_bones", carry_stat = nil, extra_stat = false },
+		{ name = "j_chaos", carry_stat = nil, extra_stat = false }
+	}, result_joker = "j_professor_skeleton", cost = 10},
+	{ jokers = { 
+		{ name = "j_fibonacci", carry_stat = nil, extra_stat = false },
+		{ name = "j_ticket", carry_stat = nil, extra_stat = false }
+	}, result_joker = "j_golden_ratio", cost = 10},
+	{ jokers = { 
+		{ name = "j_turtle_bean", carry_stat = nil, extra_stat = false },
+		{ name = "j_fibonacci", carry_stat = nil, extra_stat = false }
+	}, result_joker = "j_mathematically_correct_beans", cost = 10},
+	{ jokers = { 
+		{ name = "j_tsunami", carry_stat = nil, extra_stat = false },
+		{ name = "j_museum_thief", carry_stat = nil, extra_stat = false }
+	}, result_joker = "j_landslide", cost = 25},
+	{ jokers = { 
+		{ name = "j_no_riff_raff", carry_stat = nil, extra_stat = false },
+		{ name = "j_Absolute_emptiness", carry_stat = nil, extra_stat = false }
+	}, result_joker = "j_universe_of_jokes", cost = 25},
 }
 
 -- Возвращает место нахождения джокера по имени, -1 если джокера нет в руке
@@ -210,9 +228,13 @@ local function find_non_eternal_joker(name)
     return nil
 end
 
+-- получает любые джокеры
 local function get_all_visible_jokers()
 	local result = {}
 
+	if G.jokers == nil then
+		return result
+	end
 	-- Джокеры в руке
 	for _, card in ipairs(G.jokers.cards or {}) do
 		if card.ability.set == 'Joker' then
@@ -220,6 +242,9 @@ local function get_all_visible_jokers()
 		end
 	end
 
+	if G.shop_jokers == nil then
+		return result
+	end
 	-- Джокеры в магазине
 	if G.shop_jokers then
 		for _, card in ipairs(G.shop_jokers.cards or {}) do
@@ -229,6 +254,9 @@ local function get_all_visible_jokers()
 		end
 	end
 
+	if G.pack_cards == nil then
+		return result
+	end
 	-- Джокеры в бустерах (pack_cards)
 	if G.pack_cards then
 		for _, card in ipairs(G.pack_cards.cards or {}) do
@@ -241,6 +269,31 @@ local function get_all_visible_jokers()
 	return result
 end
 
+-- Обертка, нужна для совместимости с модом талисман
+local function big_number(n)
+    if to_big then
+        return to_big(n)
+    else
+        return n
+    end
+end
+
+local function big(n)
+    return to_big and to_big(n) or n
+end
+
+local function dollars_geq(n)
+    return G.GAME.dollars >= big(n)
+end
+
+local function dollars_lt(n)
+    return G.GAME.dollars < big(n)
+end
+
+local function dollars_eq(n)
+    return G.GAME.dollars == big(n)
+end
+
 -- Можно ли смешать джокеров, проверяет есть ли деньги, не вечные ли джокеры и тд
 function Card:can_fuse_card()
 	if self.ability.eternal then
@@ -248,7 +301,7 @@ function Card:can_fuse_card()
 	end
 
 	for _, fusion in ipairs(HybridJoker.fusions) do
-		if G.GAME.dollars >= fusion.cost + G.GAME.bankrupt_at then
+		if dollars_geq(fusion.cost + G.GAME.bankrupt_at) then
 			local found_me = false
 			local all_jokers = true
 			for __, joker in ipairs(fusion.jokers) do
@@ -431,7 +484,7 @@ function G.UIDEF.use_and_sell_buttons(card)
 		return retval
 	end
 	
-	if card.area and card.area.config.type == 'joker' and card.ability.set == 'Joker' and card.ability.fusion.ready == true then
+	if card.area and card.area.config.type == 'joker' and card.ability.set == 'Joker' then
 		local fuse = 
 		{n=G.UIT.C, config={align = "cr"}, nodes={
 		  
@@ -470,8 +523,21 @@ function G.UIDEF.card_h_popup(card)
 		retval.nodes[1].nodes[1].nodes[1].nodes[3].nodes[1].nodes[1].nodes[2].config.object:remove()
 		retval.nodes[1].nodes[1].nodes[1].nodes[3].nodes[1] = create_badge (localize('k_fusion'), HEX('f5e642'), nil, 1.2)
 	end
-
+	if card.config.center.rarity == "Advanced_Hybrid" then
+		retval.nodes[1].nodes[1].nodes[1].nodes[3].nodes[1].nodes[1].nodes[2].config.object:remove()
+		retval.nodes[1].nodes[1].nodes[1].nodes[3].nodes[1] = create_badge (localize('k_advanced_hybrid'), HEX('f5b942'), nil, 1.2)
+	end
 	return retval
+end
+
+-- проверка наличия квадратного джокера
+local function has_quadruple_joker()
+	for _, card in ipairs(G.jokers.cards or {}) do
+		if card.ability and card.ability.name == 'Четверной джокер' then
+			return true
+		end
+	end
+	return false
 end
 
 local updateref = Card.update
@@ -489,9 +555,87 @@ function Card:update(dt)
 			end
 
 			self.ability.fusion.jiggle = true
-			self.ability.fusion.ready = self:can_fuse_card()
+		end
+
+		if not G.GAME or not G.hand then return end
+
+		-- Сохраняем оригинальное значение, если ещё не было
+		if not G.GAME.run_setup.original_hand_limit then
+			G.GAME.run_setup.original_hand_limit = G.hand.config.highlighted_limit or 5
+		end
+
+		local has_joker = has_quadruple_joker()
+		local current_limit = G.hand.config.highlighted_limit
+		local saved_limit = G.GAME.run_setup.original_hand_limit
+
+		if has_joker then
+			if current_limit > quadruple_limit then
+				-- Применяем ограничение
+				G.hand.config.highlighted_limit = quadruple_limit
+			end
+		else
+			-- Восстанавливаем оригинальное значение
+			if current_limit < saved_limit then
+				G.hand.config.highlighted_limit = saved_limit
+			end
 		end
 	end
+end
+
+local original_end_round = end_round
+function end_round()
+    local expired = {}
+    
+    -- Уменьшаем счётчики временным джокерам
+    for _, card in ipairs(G.jokers.cards or {}) do
+        if card.ability and card.ability.joker_universe then
+            card.ability.joker_universe = card.ability.joker_universe - 1
+            if card.ability.joker_universe <= 0 then
+                table.insert(expired, card)
+            end
+        end
+    end
+
+    -- Если есть истёкшие джокеры — начисляем бонус и удаляем
+    if #expired > 0 then
+        local universe_jokers = {}
+        for _, card in ipairs(G.jokers.cards or {}) do
+            if card.ability and card.ability.name == "Вселенная шуток" then
+                table.insert(universe_jokers, card)
+            end
+        end
+
+        for _, universe in ipairs(universe_jokers) do
+            local bonus = universe.ability.extra.bonus_base_dop * #expired
+            universe.ability.Xmult = universe.ability.Xmult + bonus
+        end
+
+        -- Удаляем джокеры
+        for _, card in ipairs(expired) do
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                    play_sound('tarot1')
+                    card.T.r = -0.2
+                    card:juice_up(0.3, 0.4)
+                    card.states.drag.is = true
+                    card.children.center.pinch.x = true
+                    G.E_MANAGER:add_event(Event({
+                        trigger = 'after',
+                        delay = 0.3,
+                        blockable = false,
+                        func = function()
+                            G.jokers:remove_card(card)
+                            card:remove()
+                            return true
+                        end
+                    }))
+                    return true
+                end
+            }))
+        end
+    end
+
+    return original_end_round()
 end
 
 -- Функция срабатывающая при добавлении джокера в колоду
@@ -501,14 +645,12 @@ function Card:add_to_deck(from_debuff)
 		if self.ability.name == 'Острая фасоль' then
 			G.hand:change_size(self.ability.extra.hand_size)
 		end
+		if self.ability.name == 'Математически верная фасоль' then
+			G.hand:change_size(self.ability.extra.hand_size)
+		end
 		if self.ability.name == 'Золотая карта' then
             G.GAME.bankrupt_at = G.GAME.bankrupt_at - self.sell_cost
         end
-		if self.ability.name == 'Четверной джокер' then
-			if G.hand.config.highlighted_limit > 4 then
-				G.hand.config.highlighted_limit = 4
-			end
-		end
   	end
   	add_to_deckref(self, from_debuff)
 end
@@ -520,14 +662,12 @@ function Card:remove_from_deck(from_debuff)
 		if self.ability.name == 'Острая фасоль' then
 			G.hand:change_size(-self.ability.extra.hand_size)
 		end
+		if self.ability.name == 'Математически верная фасоль' then
+			G.hand:change_size(-self.ability.extra.hand_size)
+		end
 		if self.ability.name == 'Золотая карта' then
             G.GAME.bankrupt_at = G.GAME.bankrupt_at + self.sell_cost
         end
-		if self.ability.name == 'Четверной джокер' then
-			if G.hand.config.highlighted_limit == 4 then
-				G.hand.config.highlighted_limit = 5
-			end
-		end
 	end
 	remove_from_deckref(self, from_debuff)
 end
@@ -1413,14 +1553,15 @@ function SMODS.INIT.hybridjoker()
 
 	-- Абсолютная пустота
 	if mod_obj ~= nil then
-		local Absolute_emptiness = SMODS.Joker:new("Absolute emptiness", "Absolute_emptiness", {extra = {Xmult = 0, joker1 = "j_stencil", joker2 = "j_invisible"}},
+		local Absolute_emptiness = SMODS.Joker:new("Absolute emptiness", "Absolute_emptiness", {extra = {Xmult = 0, active = true, joker1 = "j_stencil", joker2 = "j_invisible"}},
 		{ x = 0, y = 0 }, nil, "Hybrid", 15, true, false, true, true, true)
 		SMODS.Sprite:new("j_Absolute_emptiness", mod_obj.path, "j_Absolute_emptiness.png", 71, 95, "asset_atli"):register();
 		Absolute_emptiness:register()
 
 		function SMODS.Jokers.j_Absolute_emptiness.loc_def(card)	
-	    	return {
+			return {
 				card.ability.extra.Xmult,
+				localize{type = 'variable', key = card.ability.extra.active and 'emptiness_active' or 'emptiness_inactive'},
 				localize{type = 'name_text', key = card.ability.extra.joker1, set = 'Joker'}, 
 				localize{type = 'name_text', key = card.ability.extra.joker2, set = 'Joker'}
 			}
@@ -1440,7 +1581,7 @@ function SMODS.INIT.hybridjoker()
 				}
 			end
 
-			if context.end_of_round and not context.individual and not context.repetition and not context.blueprint and G.GAME.blind.boss then
+			if context.end_of_round and not context.individual and not context.repetition and not context.blueprint and G.GAME.blind.boss and card.ability.extra.active == true then
 				local jokers = {}
 				for i = 1, #G.jokers.cards do
 					if G.jokers.cards[i] ~= card then
@@ -1455,6 +1596,7 @@ function SMODS.INIT.hybridjoker()
 						local copy = copy_card(chosen_joker, nil, nil, nil, chosen_joker.edition and chosen_joker.edition.negative)
 						copy:add_to_deck()
 						G.jokers:emplace(copy)
+						card.ability.extra.active = false
 
 						card_eval_status_text(
 							context.blueprint_card or card,
@@ -1549,6 +1691,8 @@ function SMODS.INIT.hybridjoker()
 					j_turtle_bean = true,
 					j_seltzer = true,
 					j_hot_beans = true,
+					j_mathematically_correct_beans = true,
+					j_banana_stencil = true
 				}
 
 				if edible_keys[key] then
@@ -1698,7 +1842,7 @@ function SMODS.INIT.hybridjoker()
 	-- Депозит
 	if mod_obj ~= nil then
 		local deposit = SMODS.Joker:new("Депозит", "deposit", {extra = {
-		bonus = 1, bonus_extra = 1.5, joker1 = "j_credit_card", joker2 = "j_business"
+		bonus = 1, bonus_extra = 2.5, joker1 = "j_credit_card", joker2 = "j_business"
 		}}, { x = 0, y = 0 }, nil, "Hybrid", 5, true, false, false, true, true)
 		SMODS.Sprite:new("j_deposit", mod_obj.path, "j_deposit.png", 71, 95, "asset_atli"):register();
 		deposit:register()
@@ -1722,7 +1866,7 @@ function SMODS.INIT.hybridjoker()
 
 			if context.individual and context.cardarea == G.play and context.other_card:is_face() and not context.blueprint then
 				local money = card.ability.extra.bonus
-				if G.GAME.dollars >= money + G.GAME.bankrupt_at then
+				if dollars_geq(money + G.GAME.bankrupt_at) then
 					ease_dollars(-money)
 					card.ability.extra_value = (card.ability.extra_value or 0) + math.floor(money + 0.5)
 					card:set_cost()
@@ -1774,7 +1918,7 @@ function SMODS.INIT.hybridjoker()
 							local edible_keys = {
 								'j_gros_michel', 'j_egg', 'j_ice_cream', 'j_cavendish',
 								'j_diet_cola', 'j_popcorn', 'j_ramen', 'j_turtle_bean',
-								'j_seltzer', 'j_hot_beans'
+								'j_seltzer', 'j_hot_beans', 'j_mathematically_correct_beans', 'j_banana_stencil'
 							}
 
 							G.E_MANAGER:add_event(Event({delay = 1.6, func = function()
@@ -1950,6 +2094,7 @@ function SMODS.INIT.hybridjoker()
 					message = localize('k_plus_stone'),
 					colour = G.C.SECONDARY_SET.Enhanced
 				})
+				playing_card_joker_effects({true})
 				return {
 					playing_cards_created = {true}
 				}
@@ -2039,6 +2184,7 @@ function SMODS.INIT.hybridjoker()
 							return true
 						end
 					}))
+					playing_card_joker_effects({true})
 
 					return {
 						playing_cards_created = {true},
@@ -2397,6 +2543,292 @@ function SMODS.INIT.hybridjoker()
             end
 		end
 	end
+
+	-- Професор скелетон
+	if mod_obj ~= nil then
+		local professor_skeleton = SMODS.Joker:new("Професор скелетон", "professor_skeleton", {extra = {dollar = 25, reroll = 10, joker1 = "j_mr_bones", joker2 = "j_chaos"}}, { x = 0, y = 0 }, nil, "Hybrid", 10, true, false, false, true, true)
+		SMODS.Sprite:new("j_professor_skeleton", mod_obj.path, "j_professor_skeleton.png", 71, 95, "asset_atli"):register();
+		professor_skeleton:register()
+
+		function SMODS.Jokers.j_professor_skeleton.loc_def(card)
+			return {card.ability.extra.dollar, card.ability.extra.reroll,
+			localize{type = 'name_text', key = card.ability.extra.joker1, set = 'Joker'},
+			localize{type = 'name_text', key = card.ability.extra.joker2, set = 'Joker'}}
+		end
+
+		function SMODS.Jokers.j_professor_skeleton.calculate(card, context)
+			if context.end_of_round and context.game_over and not context.blueprint then
+				ease_dollars(card.ability.extra.dollar)
+				G.GAME.run_setup.professor_skeleton_reroll = 10
+				calculate_reroll_cost(true)
+				G.E_MANAGER:add_event(Event({
+                    func = function()
+                        G.hand_text_area.blind_chips:juice_up()
+                        G.hand_text_area.game_chips:juice_up()
+                        play_sound('tarot1')
+                        card:start_dissolve()
+                        return true
+                    end
+                })) 
+                return {
+                    message = localize('k_saved_ex'),
+                    saved = true,
+                    colour = G.C.RED
+                }
+            end
+		end
+	end
+
+	-- Золотое сечение
+	if mod_obj ~= nil then
+		local golden_ratio = SMODS.Joker:new("Золотое сечение", "golden_ratio", {extra = {X_dollar = 1, X_dollar_dop = 0.05, mult = 16, joker1 = "j_fibonacci", joker2 = "j_ticket"}}, { x = 0, y = 0 }, nil, "Hybrid", 10, true, false, true, true, true)
+		SMODS.Sprite:new("j_golden_ratio", mod_obj.path, "j_golden_ratio.png", 71, 95, "asset_atli"):register();
+		golden_ratio:register()
+
+		function SMODS.Jokers.j_golden_ratio.loc_def(card)
+			return {card.ability.extra.X_dollar, card.ability.extra.mult, card.ability.extra.X_dollar_dop,
+			localize{type = 'name_text', key = card.ability.extra.joker1, set = 'Joker'},
+			localize{type = 'name_text', key = card.ability.extra.joker2, set = 'Joker'}}
+		end
+
+		function SMODS.Jokers.j_golden_ratio.calculate(card, context)
+			if context.individual and context.cardarea == G.play and (context.other_card:get_id() == 2 or context.other_card:get_id() == 3 or context.other_card:get_id() == 5 or context.other_card:get_id() == 8 or context.other_card:get_id() == 14) and context.other_card.ability.name == 'Gold Card' then
+				card.ability.extra.X_dollar = card.ability.extra.X_dollar + card.ability.extra.X_dollar_dop
+				return {
+                    mult = card.ability.extra.mult,
+                    card = card
+                }
+			end
+		end
+	end
+
+	-- Математически верная фасоль
+	if mod_obj ~= nil then
+		local mathematically_correct_beans = SMODS.Joker:new("Математически верная фасоль", "mathematically_correct_beans", {extra = {hand_size = 5, mult = 8, ace = false, eight = false, five = false, three = false, two = false, joker1 = "j_turtle_bean", joker2 = "j_fibonacci"}}, { x = 0, y = 0 }, nil, "Hybrid", 10, true, false, false, true, true)
+		SMODS.Sprite:new("j_mathematically_correct_beans", mod_obj.path, "j_mathematically_correct_beans.png", 71, 95, "asset_atli"):register();
+		mathematically_correct_beans:register()
+
+		function SMODS.Jokers.j_mathematically_correct_beans.loc_def(card)
+			local extra = card.ability.extra
+			local rank_names = {
+				[2] = '2',
+				[3] = '3',
+				[5] = '5',
+				[8] = '8',
+				[14] = 'A'
+			}
+
+			local ranks_required = {}
+			if not extra.two then table.insert(ranks_required, rank_names[2]) end
+			if not extra.three then table.insert(ranks_required, rank_names[3]) end
+			if not extra.five then table.insert(ranks_required, rank_names[5]) end
+			if not extra.eight then table.insert(ranks_required, rank_names[8]) end
+			if not extra.ace then table.insert(ranks_required, rank_names[14]) end
+
+			local ranks_text = table.concat(ranks_required, ", ")
+
+			return {
+				extra.hand_size,
+				extra.mult,
+				ranks_text,
+				localize{type = 'name_text', key = extra.joker1, set = 'Joker'},
+				localize{type = 'name_text', key = extra.joker2, set = 'Joker'}
+			}
+		end
+
+		function SMODS.Jokers.j_mathematically_correct_beans.calculate(card, context)
+			if context.individual and context.cardarea == G.play and context.other_card then
+				local extra = card.ability.extra
+				local rank = context.other_card:get_id()
+
+				if rank == 2 then extra.two = true end
+				if rank == 3 then extra.three = true end
+				if rank == 5 then extra.five = true end
+				if rank == 8 then extra.eight = true end
+				if rank == 14 then extra.ace = true end
+
+				if extra.two and extra.three and extra.five and extra.eight and extra.ace then
+					extra.hand_size = 5
+					extra.two = false
+					extra.three = false
+					extra.five = false
+					extra.eight = false
+					extra.ace = false
+				end
+
+				if rank == 2 or rank == 3 or rank == 5 or rank == 8 or rank == 14 then
+					return {
+						mult = extra.mult,
+						card = card
+					}
+				end
+			end
+			if not context.individual and not context.repetition and context.end_of_round and not context.blueprint then
+                if card.ability.extra.hand_size - 1 <= 0 then 
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            play_sound('tarot1')
+                            card.T.r = -0.2
+                            card:juice_up(0.3, 0.4)
+                            card.states.drag.is = true
+                            card.children.center.pinch.x = true
+                            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.3, blockable = false,
+                                func = function()
+                                    G.jokers:remove_card(card)
+                                    card:remove()
+                                    card = nil
+                                    return true; end})) 
+                                return true
+                            end
+                        })) 
+                    return {
+                        message = localize('k_eaten_ex'),
+                        colour = G.C.FILTER
+                    }
+                else
+                    card.ability.extra.hand_size = card.ability.extra.hand_size - 1
+                    G.hand:change_size(-1)
+                    return {
+                        message = localize{type='variable',key='a_handsize_minus',vars={1}},
+                        colour = G.C.FILTER
+                    }
+                end
+            end
+		end
+	end
+
+	-- Оползень
+	if mod_obj ~= nil then
+		local landslide = SMODS.Joker:new("Оползень", "landslide", {extra = {hand = 4, mult = 1, mult_mod = 1, joker1 = "j_tsunami", joker2 = "j_museum_thief"}}, { x = 0, y = 0 }, nil, "Advanced_Hybrid", 25, true, false, true, true, true)
+		SMODS.Sprite:new("j_landslide", mod_obj.path, "j_landslide.png", 71, 95, "asset_atli"):register();
+		landslide:register()
+
+		function SMODS.Jokers.j_landslide.loc_def(card)
+			return {card.ability.extra.hand, card.ability.extra.mult, card.ability.extra.mult_mod,
+			localize{type = 'name_text', key = card.ability.extra.joker1, set = 'Joker'}, 
+			localize{type = 'name_text', key = card.ability.extra.joker2, set = 'Joker'}}
+		end
+
+		function SMODS.Jokers.j_landslide.calculate(card, context)
+			if context.setting_blind and not context.blueprint_card and not context.getting_sliced then
+				local plus = G.GAME.current_round.discards_left
+                G.E_MANAGER:add_event(Event({func = function()
+					ease_hands_played(card.ability.extra.hand)
+                    ease_discard(-plus)
+                    card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = localize{type = 'variable', key = 'a_hands', vars = {card.ability.extra.hand}}})
+                return true end }))
+            end
+			if context.before then
+				G.playing_card = (G.playing_card and G.playing_card + 1) or 1
+				local front = pseudorandom_element(G.P_CARDS, pseudoseed('museum_fr'))
+				local _card = Card(
+					G.deck.T.x + G.deck.T.w/2,
+					G.deck.T.y,
+					G.CARD_W,
+					G.CARD_H,
+					front,
+					G.P_CENTERS.m_stone,
+					{playing_card = G.playing_card}
+				)
+				_card:add_to_deck()
+				G.deck.config.card_limit = G.deck.config.card_limit + 1
+				G.deck:emplace(_card)
+				table.insert(G.playing_cards, _card)
+				_card.states.visible = nil
+				G.E_MANAGER:add_event(Event({
+					func = function()
+						_card:start_materialize()
+						return true
+					end
+				}))
+				card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {
+					message = localize('k_plus_stone'),
+					colour = G.C.SECONDARY_SET.Enhanced
+				})
+				playing_card_joker_effects({true})
+				return {
+					playing_cards_created = {true}
+				}
+			end
+			if context.cardarea == G.play and context.individual then
+				multip = card.ability.extra.mult
+				card.ability.extra.mult = (card.ability.extra.mult or 0) + card.ability.extra.mult_mod
+				return {
+					message = localize({
+						type = "variable",
+						key = "a_mult",
+						vars = {multip}
+					}),
+					mult_mod = multip,
+					colour = G.C.MULT
+				}
+			end
+			if context.after and context.cardarea == G.jokers then
+				card.ability.extra.mult = 1
+				return {
+					message = localize('k_reset'),
+					colour = G.C.MULT
+				}
+			end
+			if context.cardarea == G.play and context.repetition and context.other_card.config.center.key == 'm_stone' then
+                return {
+                    message = localize('k_again_ex'),
+                    repetitions = 1,
+                    card = card
+                }	
+            end
+		end
+	end
+
+	-- Вселенная шуток
+	if mod_obj ~= nil then
+		local universe_of_jokes = SMODS.Joker:new("Вселенная шуток", "universe_of_jokes", {extra = {bonus_base_dop = 0.25, joker1 = "j_no_riff_raff", joker2 = "j_Absolute_emptiness"}, Xmult = 1}, { x = 0, y = 0 }, nil, "Advanced_Hybrid", 25, true, false, true, true, true)
+		SMODS.Sprite:new("j_universe_of_jokes", mod_obj.path, "j_universe_of_jokes.png", 71, 95, "asset_atli"):register();
+		universe_of_jokes:register()
+
+		function SMODS.Jokers.j_universe_of_jokes.loc_def(card)
+			return {card.ability.Xmult, card.ability.extra.bonus_base_dop,
+			localize{type = 'name_text', key = card.ability.extra.joker1, set = 'Joker'}, 
+			localize{type = 'name_text', key = card.ability.extra.joker2, set = 'Joker'}}
+		end
+
+		function SMODS.Jokers.j_universe_of_jokes.calculate(card, context)
+			if context.joker_main and card.ability.Xmult > 1 then
+				local Xmult = card.ability.Xmult
+				return {
+					message = localize {
+                        type = 'variable',
+                        key = 'a_xmult',
+                        vars = {card.ability.Xmult}
+					},
+					Xmult_mod = Xmult,
+					colour = G.C.MULT
+				}
+			end
+			if context.setting_blind and not card.getting_sliced then
+				local i = 0
+				local chance = 1.0
+				while pseudorandom('joker_universe_' .. i) < chance do
+    				i = i + 1
+    				chance = chance * 0.7
+					local universe_rarity = pseudorandom('joker_universe_rarity')
+					local card_new = create_card('Joker', G.jokers, nil, universe_rarity, nil, nil, nil, nil)
+					local universe_blind_count = 1
+					local j = 0
+					local chance2 = 1.0
+					while pseudorandom('joker_universe_blind_count_'  .. j) < chance2 do
+						universe_blind_count = universe_blind_count + 1
+						j = j + 1
+    					chance2 = chance2 * 0.7
+					end
+					card_new.ability.joker_universe = universe_blind_count
+					card_new:add_to_deck()
+					G.jokers:emplace(card_new)
+					card_new:start_materialize()
+				end
+			end
+		end
+	end
 end
 
 -- Переделать под toml, боюсь что будет несовместимо с другими модами
@@ -2603,7 +3035,7 @@ function Game:start_run(args)
 
         -- Применяем спецусловия Одиссеи только один раз при первом запуске
         if not G.GAME.run_setup.odyssey_initialized then
-            G.GAME.dollars = 100                              -- Стартовые деньги
+            ease_dollars(100)                           	  -- Стартовые деньги
             G.GAME.interest = 0                               -- Процент дохода
             G.GAME.interest_cap = 0                           -- Лимит процентов
 			G.GAME.shop.joker_max = 3
@@ -2785,8 +3217,91 @@ function calculate_reroll_cost(skip_increment)
 			end
 		end
 	end
+	if G.GAME.run_setup.professor_skeleton_reroll ~= nil then
+		if G.GAME.run_setup.professor_skeleton_reroll > 0 then
+			G.GAME.run_setup.professor_skeleton_reroll = G.GAME.run_setup.professor_skeleton_reroll - 1
+			G.GAME.current_round.free_rerolls = G.GAME.current_round.free_rerolls + 1
+		end
+	end
 	original_calculate_reroll_cost(skip_increment)
 end
 
+local original_sell_card = Card.sell_card
+function Card:sell_card()
+    G.CONTROLLER.locks.selling_card = true
+    stop_use()
+    local area = self.area
+    G.CONTROLLER:save_cardarea_focus(area == G.jokers and 'jokers' or 'consumeables')
+
+    if self.children.use_button then self.children.use_button:remove(); self.children.use_button = nil end
+    if self.children.sell_button then self.children.sell_button:remove(); self.children.sell_button = nil end
+    
+    self:calculate_joker{selling_self = true}
+
+    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.2,func = function()
+        play_sound('coin2')
+        self:juice_up(0.3, 0.4)
+        return true
+    end}))
+    delay(0.2)
+    G.E_MANAGER:add_event(Event({trigger = 'immediate',func = function()
+		sell_ease_dollars(self.sell_cost, self)
+
+        self:start_dissolve({G.C.GOLD})
+        delay(0.3)
+
+        inc_career_stat('c_cards_sold', 1)
+        if self.ability.set == 'Joker' then 
+            inc_career_stat('c_jokers_sold', 1)
+        end
+        if self.ability.set == 'Joker' and G.GAME.blind and G.GAME.blind.name == 'Verdant Leaf' then 
+            G.E_MANAGER:add_event(Event({trigger = 'immediate',func = function()
+                G.GAME.blind:disable()
+                return true
+            end}))
+        end
+        G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.3, blocking = false,
+        func = function()
+            G.E_MANAGER:add_event(Event({trigger = 'immediate',
+            func = function()
+                G.E_MANAGER:add_event(Event({trigger = 'immediate',
+                func = function()
+                    G.CONTROLLER.locks.selling_card = nil
+                    G.CONTROLLER:recall_cardarea_focus(area == G.jokers and 'jokers' or 'consumeables')
+                return true
+                end}))
+            return true
+            end}))
+        return true
+        end}))
+        return true
+    end}))
+end
+
+local original_ease_dollars = ease_dollars
+function ease_dollars(mod, instant)
+    mod = big(mod)
+
+    for _, card in ipairs(G.jokers.cards or {}) do
+        if card.ability and card.ability.name == 'Золотое сечение' then
+            if mod > big(0) then
+                mod = mod * big(card.ability.extra.X_dollar)
+            end
+        end
+    end
+
+    if to_big then
+        mod = mod:floor()
+    else
+        mod = math.floor(mod)
+    end
+
+    original_ease_dollars(mod, instant)
+end
+
+function sell_ease_dollars(mod, instant)
+    mod = big(mod)
+    original_ease_dollars(mod, instant)
+end
 ----------------------------------------------
 ------------MOD CODE END----------------------
