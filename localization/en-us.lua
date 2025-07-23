@@ -124,6 +124,15 @@ return{
                     "Recipe: {C:inactive}(#4# + #5#)"
                 }
             },
+            j_greedy_agate = {
+                name = "Greedy Agate",
+				text = {
+					"Each {C:clubs}club{} card played",
+				    "gives {C:mult}+#1#{} mult {X:red,C:white}X#2#{} mult",
+				    "if there are no {C:clubs}clubs{} cards left in your hand",
+				    "Recipe: {C:inactive}(#3# + #4#)"
+				}
+            },
             j_half_flag = {
                 name = "Half Flag",
                 text = {
@@ -136,11 +145,11 @@ return{
             j_true_madness = {
                 name = "True Madness",
                 text = {
-                    "When choosing a {C:attention}small{} or {C:attention}big blind{}",
+                    "When choosing a {C:attention}blind{}",
                     "gain {X:mult,C:white}x#1#{} mult.",
                     "and {C:attention}destroy{} a random joker",
                     "increasing the bonus by {X:mult,C:white}x#3#{}",
-                    "{C:attention}resets{} the bonus if no {C:attention}joker{} was destroyed",
+                    "move to the far left position to temporarily disable",
                     "can destroy {C:attention}eternal{} jokers",
                     "{C:inactive}(Currently: mult. {X:mult,C:white}x#2#{C:inactive})",
                     "Recipe: {C:inactive}(#4# + #5#)"
@@ -149,7 +158,7 @@ return{
             j_maniac_joker = {
                 name = "Maniac Joker",
                 text = {
-                    "When choosing a {C:attention}small{} or {C:attention}big blind{}",
+                    "When choosing a {C:attention}blind{}",
                     "the joker to the right is destroyed if its rarity is {C:red}#1#{}",
                     "and permanently adds {C:attention}a quarter{}",
                     "of its sell price to this {X:mult,C:white}mult.{}",
@@ -424,13 +433,183 @@ return{
         },
         dictionary={
             b_fuse = "Merge",
-            k_fusion="Hybrid",
+            k_hybrid ="Hybrid",
+            k_null = "reset",
             k_advanced_hybrid = "Advanced Hybrid",
-            k_minushand = "-1 hand"
+            k_minushand = "-1 hand",
+			k_art_by_BubbleBubble = "Art by BubbleBubble",
+            ml_j_tsunami_short_description = {
+                "All cards are counted when counting",
+                "The more cards are counted, the more mult."
+			},
+            ml_j_avid_tourist_short_description = {
+                "Played cards gain chip bonuses",
+                "Play different cards to increase the bonus"
+            },
+            ml_j_familiar_faces_short_description = {
+                "Played cards gain chip bonuses",
+                "Play the same face cards to increase the bonus"
+            },
+            ml_j_no_riff_raff_short_description = {
+                "Creates several regular Jokers",
+                "Each one increases the multiplier"
+            },
+            ml_j_inflation_short_description = {
+                "Hands with 2 or more Diamonds gain multiplier",
+                "And increase Joker prices"
+            },
+            ml_j_super_greedy_joker_short_description = {
+                "Diamond cards generate a lot of money",
+                "Other suits are weakened"
+            },
+            ml_j_harem_short_description = {
+                "Played Queens give multiplier",
+                "More if the Queen is a Heart",
+                "Queens randomly change suit"
+            },
+            ml_j_ruby_short_description = {
+                "Played Hearts have a 1 in 3 chance",
+                "to give Chips and Mult."
+            },
+            ml_j_count_dracula_short_description = {
+                "Played enhanced cards increase Mult.",
+                "Hearts increase it more",
+                "and lose enhancement"
+            },
+            ml_j_on_the_cutting_edge_short_description = {
+                "Played Spades give a lot of Chips",
+                "If Spades are in hand, hand counts as 2"
+            },
+            ml_j_hot_beans_short_description = {
+                "Increases hand size",
+                "If hand has no 2 Spades,",
+                "bonus is reduced"
+            },
+            ml_j_full_pockets_short_description = {
+                "Mult. increases the fewer cards",
+                "are in your full deck, and the more Clubs"
+            },
+            ml_j_greedy_agate_short_description = {
+                "Played Clubs give Mult.",
+                "Reduces Mult. if no Clubs in hand"
+            },
+            ml_j_half_flag_short_description = {
+                "Discards with fewer than 3 cards",
+                "give more Chips"
+            },
+            ml_j_true_madness_short_description = {
+                "Destroys a random Joker when picking a blind",
+                "and increases Mult. Bonus increases if",
+                "a Joker is destroyed, and decreases if not",
+                "Can destroy Eternal Jokers"
+            },
+            ml_j_maniac_joker_short_description = {
+                "Destroys the Joker on the right when picking a blind",
+                "if it has the right rarity and increases Mult."
+            },
+            ml_j_Absolute_emptiness_short_description = {
+                "Increases Mult. for every empty Joker slot",
+                "After beating a Boss Blind, copies a random Joker"
+            },
+            ml_j_banana_stencil_short_description = {
+                "All edible Jokers grant multiplier."
+            },
+            ml_j_quadruple_joker_short_description = {
+                "Allows making a Flush or Straight with 4 cards.",
+                "Increases chips if 4 cards are played.",
+                "Prevents playing more than 4 cards."
+            },
+            ml_j_business_acumen_short_description = {
+                "First 3 face cards played have a 1 in 2 chance",
+                "to pay out. The 4th card pays a huge reward.",
+                "Further cards deduct money instead."
+            },
+            ml_j_gold_card_short_description = {
+                "Increases sell value at end of round.",
+                "Borrow as much money as this Joker's sell value."
+            },
+            ml_j_banana_smoothie_short_description = {
+                "Destroys the Joker to the right when selecting a blind.",
+                "Has a 1 in 6 chance to replace it with an edible Joker."
+            },
+            ml_j_drunken_flag_short_description = {
+                "+1 discard per round.",
+                "Gains chips per unused discard.",
+                "Weakens after a discard is used."
+            },
+            ml_j_supervillain_short_description = {
+                "Turns all discards into hands.",
+                "Doubles multiplier after every hand played."
+            },
+            ml_j_museum_thief_short_description = {
+                "+3 hands. Lose all discards.",
+                "Each hand played may create a stone card."
+            },
+            ml_j_stoneface_short_description = {
+                "With 3 or more stone cards,",
+                "grants a reward and creates another stone card."
+            },
+            ml_j_billiard_trick_short_description = {
+                "Multiplier on the last hand of the round.",
+                "1 in 2 chance to create a charm tag."
+            },
+            ml_j_eight_shooter_short_description = {
+                "Each 8 in hand increases the chance",
+                "to replay the first played card 8 times",
+            },
+            ml_j_random_mutation_short_description = {
+                "Creates a random number of card copies",
+                "Copies may change suit or rank",
+            },
+            ml_j_starfall_short_description = {
+                "Adds to mult. the doubled number of times",
+                "a poker hand has been played",
+                "A poker hand is played 3 times on the last hand of the round",
+            },
+            ml_j_blind_throw_short_description = {
+                "All chances always trigger on the last hand",
+            },
+            ml_j_steel_will_short_description = {
+                "The higher the rank of the lowest steel card",
+                "in hand, the higher the mult.",
+            },
+            ml_j_cobalt_joker_short_description = {
+                "Each steel card in the deck grants chips",
+                "Played steel cards return to the deck after play",
+            },
+            ml_j_chaos_card_short_description = {
+                "Shop rerolls may be free",
+                "Increases mult. for each reroll",
+            },
+            ml_j_professor_skeleton_short_description = {
+                "Prevents death upon defeat",
+                "Grants free rerolls and a reward",
+            },
+            ml_j_golden_ratio_short_description = {
+                "Played golden Aces, 2s, 3s, 5s, and 8s",
+                "increase the $ multiplier from all sources",
+            },
+            ml_j_mathematically_correct_beans_short_description = {
+                "Increases hand size. Hand size shrinks each round",
+                "Play Ace, 2, 3, 5, and 8 to restore original size",
+            },
+            ml_j_landslide_short_description = {
+                "Absorbs all discards. +3 hands. Adds Stone cards with each hand",
+                "The more cards are counted, the higher the mult.",
+            },
+            ml_j_universe_of_jokes_short_description = {
+                "Creates jokers that ignore the joker limit",
+                "After a few blinds, they self-destruct and increase mult.",
+            },
         },
         labels={
-            fusion="Hybrid",
+            hybrid = "Hybrid",
             advanced_hybrid = "Advanced Hybrid"
+        },
+        challenge_names={
+            c_there_is_a_wave_coming = "There's a wave coming",
+			c_familiar_strangers = "Familiar strangers",
+            c_Rich_joker_poor_joker = "Rich Joker Poor Joker"
         },
 	}
 }
